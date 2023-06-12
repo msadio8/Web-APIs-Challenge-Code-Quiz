@@ -93,7 +93,7 @@ var submitBtn = document.querySelector("#submit");
 var startBtn = document.querySelector("#start");
 var initialsEl = document.querySelector("#initials");
 var feedbackEl = document.querySelector("#feedback");
-
+var scorescreen = document.querySelector("#score-screen");
 // quiz state variables
 var currentQuestionIndex = 0;
 var time = questions.length * 15;
@@ -184,6 +184,7 @@ function questionClick() {
 function quizEnd() {
     // stop timer
     clearInterval(timerId);
+    printHighscores();
 
     // show end screen
     var endScreenEl = document.getElementById("end-screen");
@@ -195,6 +196,7 @@ function quizEnd() {
 
     // hide questions section
     questionsEl.setAttribute("class", "hide");
+    scorescreen.classList.remove("hide");
 }
 
 function clockTick() {
@@ -211,7 +213,7 @@ function clockTick() {
 function saveHighscore() {
     // get value of input box
     var initials = initialsEl.value.trim();
-
+    console.log(initials)
     if (initials !== "") {
         // get saved scores from localstorage, or if not any, set to empty array
         var highscores =
@@ -227,8 +229,12 @@ function saveHighscore() {
         highscores.push(newScore);
         window.localStorage.setItem("highscores", JSON.stringify(highscores));
 
-        // redirect to next page
-        window.location.href = "score.html";
+        var liTag = document.createElement("li");
+        liTag.textContent = newScore.initials + " - " + newScore.score;
+
+        // display on page
+        var olEl = document.getElementById("highscores");
+        olEl.appendChild(liTag);
     }
 }
 
@@ -266,14 +272,16 @@ function printHighscores() {
         olEl.appendChild(liTag);
     });
 }
-
+document.getElementById("clear").onclick = clearHighscores;
 function clearHighscores() {
     window.localStorage.removeItem("highscores");
-    window.location.reload();
+   
 
-    document.getElementById("clear").onclick = clearHighscores;
-
- // run function when page loads
- printHighscores();
+    
+    var olEl = document.getElementById("highscores");
+    olEl.innerHTML=""
+    
+ 
+ 
 }
 
